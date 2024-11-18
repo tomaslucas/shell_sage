@@ -1,9 +1,0 @@
-project:
-  output-dir: _docs
-
-website:
-  title: "bash_buddy"
-  site-url: "https://AnswerDotAI.github.io/bash_buddy"
-  description: "Your favorite AI buddy right in your terminal"
-  repo-branch: main
-  repo-url: "https://github.com/AnswerDotAI/bash_buddy"
