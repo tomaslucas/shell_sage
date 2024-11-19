@@ -5,4 +5,6 @@ d = { 'settings': { 'branch': 'main',
                 'doc_host': 'https://AnswerDotAI.github.io',
                 'git_url': 'https://github.com/AnswerDotAI/bash_buddy',
                 'lib_path': 'bash_buddy'},
-  'syms': {'bash_buddy.core': {'bash_buddy.core.foo': ('core.html#foo', 'bash_buddy/core.py')}}}
+  'syms': { 'bash_buddy.core': { 'bash_buddy.core.get_history': ('core.html#get_history', 'bash_buddy/core.py'),
+                                 'bash_buddy.core.main': ('core.html#main', 'bash_buddy/core.py'),
+                                 'bash_buddy.core.run_cmd': ('core.html#run_cmd', 'bash_buddy/core.py')}}}
