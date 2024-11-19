@@ -1,6 +1,7 @@
 from claudette import *
 from fastcore.script import *
 from functools import partial
+from rich.console import Console
 from rich.markdown import Markdown
 
 import psutil,subprocess,sys
@@ -42,6 +43,7 @@ sp = '''<assistant>You are BashBuddy, a command-line teaching assistant created 
 - Link to documentation with `man command_name` or `-h`/`--help`
 </important>'''
 
+print = Console().print
 cli = Client(models[1])
 bb = partial(cli, sp=sp)
 
@@ -56,6 +58,8 @@ def main(
     n: int = 200, # Number of history lines
     o: int = 70, # Number of output lines before piping to less
     code_theme: str = 'monokai', # The code theme to use when rendering BashBuddy's responses
+    code_lexer: str = 'python', # The lexer to use for inline code markdown blocks
+    
 ):
     query = ' '.join(query)
     ctxt = ""
@@ -71,4 +75,4 @@ def main(
     if len(r.splitlines()) > o:
         p = subprocess.Popen(['less'], stdin=subprocess.PIPE)
         p.communicate(input=r.encode())
-    else: print(Markdown(r, code_theme=code_theme))
+    else: print(Markdown(r, code_theme=code_theme, inline_code_lexer=code_lexer, inline_code_theme=code_theme))
