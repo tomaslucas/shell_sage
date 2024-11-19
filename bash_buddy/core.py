@@ -28,7 +28,7 @@ sp = '''<assistant>You are BashBuddy, a command-line teaching assistant created 
 </response_format>
 
 <style>
-- Use terminal-friendly formatting
+- Use Markdown formatting in your responses
 - Format commands in `backticks`
 - Include comments with # for complex commands
 - Keep responses under 10 lines unless complexity requires more
@@ -53,7 +53,7 @@ def get_history(n):
 def main(
     query: Param('The query to send to the LLM', str, nargs="+"),
     NH: bool = False, # Don't include terminal history
-    n: int = 100, # Number of history lines
+    n: int = 200, # Number of history lines
     o: int = 30, # Number of output lines before piping to less
 ):
     query = ' '.join(query)
@@ -70,4 +70,4 @@ def main(
     if len(r.splitlines()) > o:
         p = subprocess.Popen(['less'], stdin=subprocess.PIPE)
         p.communicate(input=r.encode())
-    else: print(r)
+    else: print(Markdown(r))
