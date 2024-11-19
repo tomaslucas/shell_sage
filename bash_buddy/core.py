@@ -54,7 +54,8 @@ def main(
     query: Param('The query to send to the LLM', str, nargs="+"),
     NH: bool = False, # Don't include terminal history
     n: int = 200, # Number of history lines
-    o: int = 30, # Number of output lines before piping to less
+    o: int = 70, # Number of output lines before piping to less
+    code_theme: str = 'monokai', # The code theme to use when rendering BashBuddy's responses
 ):
     query = ' '.join(query)
     ctxt = ""
@@ -70,4 +71,4 @@ def main(
     if len(r.splitlines()) > o:
         p = subprocess.Popen(['less'], stdin=subprocess.PIPE)
         p.communicate(input=r.encode())
-    else: print(Markdown(r))
+    else: print(Markdown(r, code_theme=code_theme))
