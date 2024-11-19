@@ -13,20 +13,21 @@ Install latest from the GitHub
 
 or from [pypi](https://pypi.org/project/bash_buddy/)
 
-``` sh
-$ pip install bash_buddy
+```sh
+pip install bash_buddy
 ```
 
 We recommend also setting up your terminal editor of choice to keep the editor content's displayed in the terminal on exit. This allows `bashbuddy` to see the files you have been working on. Here is how you can do this in vim:
 
 ```sh
-$ echo "set t_ti= t_te=" >> ~/.vimrc
+echo "set t_ti= t_te=" >> ~/.vimrc
 ```
 
 ## How to use
 
+`bashbuddy` is designed to be ran inside a tmux session since it relies on tmux for getting what has is displayed on your terminal as context. If you don't want to use tmux, you will need to use the `--NH` command, which will not include your terminal history.
 
-``` python
+```sh
 bb8 hi bashbuddy
 ```
 
@@ -39,4 +40,10 @@ Hello! I'm BashBuddy, your command-line assistant. I can help you with:
 - File management
 - Process handling
 - And more!
+```
+
+You can also pipe outputs into bashbuddy:
+
+```sh
+cat file.txt | bb8 summarize this file
 ```
