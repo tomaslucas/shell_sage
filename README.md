@@ -1,17 +1,13 @@
 # ShellSage
 
-This file will become your README and also the index of your
-documentation.
-
-
 ## Usage
 
 ### Installation
 
 Install latest from the GitHub
-[repository](https://github.com/AnswerDotAI/bash_buddy):
+[repository](https://github.com/AnswerDotAI/shell_sage):
 
-or from [pypi](https://pypi.org/project/bash_buddy/)
+or from [pypi](https://pypi.org/project/shell_sage/)
 
 ```sh
 pip install shell_sage
@@ -45,5 +41,5 @@ Hello! I'm ShellSage, your command-line assistant. I can help you with:
 You can also pipe outputs into `ShellSage`:
 
 ```sh
-cat file.txt | bb8 summarize this file
+cat file.txt | ssage summarize this file
 ```
