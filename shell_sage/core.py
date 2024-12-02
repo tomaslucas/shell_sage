@@ -107,8 +107,18 @@ chat = Chat(model, sp=action_sp)
 ssa = chat.toolloop
 
 # %% ../nbs/00_core.ipynb 11
-def get_history(n):
-    try: return subprocess.check_output(['tmux', 'capture-pane', '-p', '-S', f'-{n}'], text=True)
+def get_history(n, all_panes=False):
+    try:
+        if not all_panes: return subprocess.check_output(['tmux', 'capture-pane', '-p', '-S', f'-{n}'], text=True)
+        current = subprocess.check_output(['tmux', 'display-message', '-p', '#{pane_id}'], text=True).strip()
+        panes = [p for p in subprocess.check_output(['tmux', 'list-panes', '-F', '#{pane_id}'], text=True).splitlines() if p != current]        
+        outputs = []
+        for pane in panes:
+            out = subprocess.check_output(['tmux', 'capture-pane', '-p', '-t', pane, '-S', f'-{n}'], text=True)
+            outputs.append(f"=== Pane {pane} ===\n{out.strip()}")            
+        out = subprocess.check_output(['tmux', 'capture-pane', '-p', '-t', current, '-S', f'-{n}'], text=True)
+        outputs.append(f"=== Current pane ===\n{out.strip()}")
+        return '\n\n'.join(outputs)
     except subprocess.CalledProcessError: return None
 
 # %% ../nbs/00_core.ipynb 12
@@ -132,6 +142,7 @@ def main(
     query: Param('The query to send to the LLM', str, nargs='+'),
     action: bool = False, # Run ShellSage in action mode
     NH: bool = False, # Don't include terminal history
+    AP: bool = False, # Whether to include all panes in session
     n: int = 200, # Number of history lines
     code_theme: str = 'monokai', # The code theme to use when rendering ShellSage's responses
     code_lexer: str = 'python', # The lexer to use for inline code markdown blocks
@@ -141,7 +152,7 @@ def main(
     ctxt = ''
     # Get tmux history if requested and available
     if not NH:
-        history = get_history(n)
+        history = get_history(n,AP)
         if history: ctxt += f'<terminal_history>\n{history}\n</terminal_history>'
 
     # Read from stdin if available
