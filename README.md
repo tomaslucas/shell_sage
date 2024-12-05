@@ -19,6 +19,12 @@ We recommend also setting up your terminal editor of choice to keep the editor c
 echo "set t_ti= t_te=" >> ~/.vimrc
 ```
 
+You will also need to get an Anthropic API key and set its environment variable:
+
+```sh
+export ANTHROPIC_API_KEY=sk...
+```
+
 ## How to use
 
 `ShellSage` is designed to be ran inside a tmux session since it relies on tmux for getting what has is displayed on your terminal as context. If you don't want to use tmux, you will need to use the `--NH` command, which will not include your terminal history.
