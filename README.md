@@ -53,7 +53,7 @@ cat file.txt | ssage summarize this file
 You can also select a specific pane for context to come from instead of the default current pane.
 
 ```sh
-`ssage --pid %3 your question
+ssage --pid %3 your question
 ```
 
 > Tip: To use the pane-id selection feature, it is helpful to add `set -g status-right '#{pane_id}'` to your `~/.tmux.conf` file.  Once done, you can reload your tmux config with `tmux source ~/.tmux.conf` to have the pane id displayed on the right hand side of your tmux status bar.
