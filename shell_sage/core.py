@@ -11,7 +11,7 @@ from fastcore.utils import *
 from functools import partial
 from rich.console import Console
 from rich.markdown import Markdown
-
+from datetime import datetime
 import subprocess,sys
 from subprocess import check_output as co
 
@@ -153,22 +153,32 @@ def main(
     n: int = 200, # Number of history lines
     code_theme: str = 'monokai', # The code theme to use when rendering ShellSage's responses
     code_lexer: str = 'python', # The lexer to use for inline code markdown blocks
+    verbosity: int = 0 # Level of verbosity (0 or 1)
 ):  
+    if verbosity>0: print(f"{datetime.now()} | Starting ShellSage request")
     md = partial(Markdown, code_theme=code_theme, inline_code_lexer=code_lexer, inline_code_theme=code_theme)
     query = ' '.join(query)
     ctxt = ''
     # Get tmux history if requested and available
 
     if not NH:
+        if verbosity>0: print(f"{datetime.now()} | Adding TMUX history to prompt")
         history = get_history(n,pid)
         if history: ctxt += f'<terminal_history>\n{history}\n</terminal_history>'
 
     # Read from stdin if available
-    if not sys.stdin.isatty(): ctxt += f'\n<context>\n{sys.stdin.read()}</context>'
+    if not sys.stdin.isatty(): 
+        if verbosity>0: print(f"{datetime.now()} | Adding stdin to prompt")
+        ctxt += f'\n<context>\n{sys.stdin.read()}</context>'
     
+    if verbosity>0: print(f"{datetime.now()} | Finalizing prompt")
     query = f'{ctxt}\n<query>\n{query}\n</query>'
+
     if action:
         print(md(contents(chat(query))))
         chat.tools = [run_cmd]
         print(md(contents(ssa('proceed'))))
-    else: print(md(contents(ss(query))))
+    else: 
+        if verbosity>0: print(f"{datetime.now()} | Sending prompt to model")
+        res = md(contents(ss(query)))
+        print(res)
