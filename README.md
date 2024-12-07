@@ -57,3 +57,25 @@ ssage --pid %3 your question
 ```
 
 > Tip: To use the pane-id selection feature, it is helpful to add `set -g status-right '#{pane_id}'` to your `~/.tmux.conf` file.  Once done, you can reload your tmux config with `tmux source ~/.tmux.conf` to have the pane id displayed on the right hand side of your tmux status bar.
+
+### Configuration
+
+Sage uses a configuration file located at `~/.config/shell_sage/shell_sage.conf`. You can overwrite these configurations by modifying this file or by passing the ShellSage CLI tool a specific argument. By default, ShellSage will use Anthropic's Claude Sonnet 3.5 model. However, you can also use any OpenAI model as well. For example, you can modify your configuration file to be the following:
+
+```
+[DEFAULT]
+model = gpt-4o-mini
+provider = openai
+history_lines = -1
+code_theme = monokai
+code_lexer = python
+sassy_mode = False
+```
+
+And now when you run ShellSage, it will use GPT 4o mini rather than Cloud Sonnet 3.5. From the command line, you could also do this:
+
+```sh
+ssage hi --provider openai --model gpt-4o-mini
+```
+
+Remember, this does require you to have set up your OpenAI API key as an environment variable.
