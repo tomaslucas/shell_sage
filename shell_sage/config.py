@@ -27,13 +27,11 @@ providers = {
 # %% ../nbs/01_config.ipynb 9
 @dataclass
 class ShellSageConfig:
-    model: str = providers['anthropic'][1]
     provider: str = "anthropic"
+    model: str = providers['anthropic'][1]
     history_lines: int = -1
     code_theme: str = "monokai"
     code_lexer: str = "python"
-    sassy_mode: bool = False
-    verbosity: int = 0
 
 # %% ../nbs/01_config.ipynb 11
 def get_cfg():

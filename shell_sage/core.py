@@ -100,19 +100,33 @@ ssp = '''<assistant>You are ShellSage, a highly advanced command-line teaching a
 </important>'''
 
 # %% ../nbs/00_core.ipynb 9
+def _aliases(shell):
+    return co([shell, '-ic', 'alias'], text=True).strip()
+
+# %% ../nbs/00_core.ipynb 11
+def _sys_info():
+    sys = co(['uname', '-a'], text=True).strip()
+    ssys = f'<system>{sys}</system>'
+    shell = co('echo $SHELL', shell=True, text=True).strip()
+    sshell = f'<shell>{shell}</shell>'
+    aliases = _aliases(shell)
+    saliases = f'<aliases>\n{aliases}\n</aliases>'
+    return f'<system_info>\n{ssys}\n{sshell}\n{saliases}\n</system_info>'
+
+# %% ../nbs/00_core.ipynb 14
 def get_pane(n, pid=None):
     "Get output from a tmux pane"
     cmd = ['tmux', 'capture-pane', '-p', '-S', f'-{n}']
     if pid: cmd += ['-t', pid]
     return co(cmd, text=True)
 
-# %% ../nbs/00_core.ipynb 11
+# %% ../nbs/00_core.ipynb 16
 def get_panes(n):
     cid = co(['tmux', 'display-message', '-p', '#{pane_id}'], text=True).strip()
     pids = [p for p in co(['tmux', 'list-panes', '-F', '#{pane_id}'], text=True).splitlines()]        
     return '\n'.join(f"<pane id={p} {'active' if p==cid else ''}>{get_pane(n, p)}</pane>" for p in pids)        
 
-# %% ../nbs/00_core.ipynb 13
+# %% ../nbs/00_core.ipynb 18
 def get_history(n, pid='current'):
     try:
         if pid=='current': return get_pane(n)
@@ -120,14 +134,14 @@ def get_history(n, pid='current'):
         return get_pane(n, pid)
     except subprocess.CalledProcessError: return None
 
-# %% ../nbs/00_core.ipynb 15
+# %% ../nbs/00_core.ipynb 20
 def get_opts(**opts):
     cfg = get_cfg()
     for k, v in opts.items():
         if v is None: opts[k] = cfg[k]
     return AttrDict(opts)
 
-# %% ../nbs/00_core.ipynb 17
+# %% ../nbs/00_core.ipynb 22
 clis = {
     'anthropic': cla.Client,
     'openai': cos.Client
@@ -141,13 +155,14 @@ def get_sage(provider, model, sassy=False):
     contents = conts[provider]
     return partial(cli, sp=ssp if sassy else sp), contents
 
-# %% ../nbs/00_core.ipynb 19
+# %% ../nbs/00_core.ipynb 24
 @call_parse
 def main(
     query: Param('The query to send to the LLM', str, nargs='+'),
     pid: str = 'current', # `current`, `all` or tmux pane_id (e.g. %0) for context
+    skip_system: bool = False, # Whether to skip system information in the AI's context
     n: int = None, # Number of history lines. Defaults to tmux scrollback history length
-    s: bool = None, # Enable sassy mode
+    s: bool = False, # Enable sassy mode
     provider: str = None, # The LLM Provider
     model: str = None, # The LLM model that will be invoked on the LLM provider
     code_theme: str = None, # The code theme to use when rendering ShellSage's responses
@@ -155,13 +170,13 @@ def main(
     verbosity: int = 0 # Level of verbosity (0 or 1)
 ):  
     opts = get_opts(history_lines=n, provider=provider, model=model,
-                    sassy_mode=s, code_theme=code_theme, code_lexer=code_lexer)
+                    code_theme=code_theme, code_lexer=code_lexer)
     
     if verbosity>0:
         print(f"{datetime.now()} | Starting ShellSage request with options {opts}")
     md = partial(Markdown, code_theme=opts.code_theme, inline_code_lexer=opts.code_lexer, inline_code_theme=opts.code_theme)
     query = ' '.join(query)
-    ctxt = ''
+    ctxt = '' if skip_system else _sys_info()
 
     # Get tmux history if in a tmux session
     if os.environ.get('TMUX'):
@@ -179,5 +194,5 @@ def main(
     query = [mk_msg(query)] if opts.provider == 'openai' else query
 
     if verbosity>0: print(f"{datetime.now()} | Sending prompt to model")
-    sage, contents = get_sage(opts.provider, opts.model, opts.sassy_mode)
+    sage, contents = get_sage(opts.provider, opts.model, s)
     print(md(contents(sage(query))))
