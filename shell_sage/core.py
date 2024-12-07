@@ -12,7 +12,7 @@ from functools import partial
 from rich.console import Console
 from rich.markdown import Markdown
 from datetime import datetime
-import subprocess,sys
+import os,subprocess,sys
 from subprocess import check_output as co
 
 # %% ../nbs/00_core.ipynb 4
@@ -151,35 +151,32 @@ chat = Chat(model, sp=action_sp)
 ssa = chat.toolloop
 
 # %% ../nbs/00_core.ipynb 12
-def get_pane_output(n, pane_id=None):
+def get_pane_output(n, pid=None):
     "Get output from a tmux pane"
     cmd = ['tmux', 'capture-pane', '-p', '-S', f'-{n}']
-    if pane_id: cmd += ['-t', pane_id]
+    if pid: cmd += ['-t', pid]
     return co(cmd, text=True)
 
 # %% ../nbs/00_core.ipynb 13
 def get_pane_outputs(n):
     current_id = co(['tmux', 'display-message', '-p', '#{pane_id}'], text=True).strip()
-    pane_ids = [p for p in co(['tmux', 'list-panes', '-F', '#{pane_id}'], text=True).splitlines()]        
-    return '\n'.join(f"<pane id={p} {'active' if p==current_id else ''}>{get_pane_output(n, p)}</pane>" for p in pane_ids)        
+    pids = [p for p in co(['tmux', 'list-panes', '-F', '#{pane_id}'], text=True).splitlines()]        
+    return '\n'.join(f"<pane id={p} {'active' if p==current_id else ''}>{get_pane_output(n, p)}</pane>" for p in pids)        
 
 # %% ../nbs/00_core.ipynb 14
-def get_history(n, pane_id='current' # Current, All or pane ID
-               ):
+def get_history(n, pid='current'):
     try:
-        if pane_id=='current': return get_pane_output(n)
-        if pane_id=='all': return get_pane_outputs(n)
-        return get_pane_output(n, pane_id)
-            
+        if pid=='current': return get_pane_output(n)
+        if pid=='all': return get_pane_outputs(n)
+        return get_pane_output(n, pid)
     except subprocess.CalledProcessError: return None
 
 # %% ../nbs/00_core.ipynb 15
 def run_cmd(
     desc:str, # description of 
     cmd:str,  # the command to run
-    ):
+):
     "Bash command to be ran with the description of why it will be ran and what it will do"
-    
     print(f"\nStep: {desc}")
     print(f"Command: `{cmd}`")
     if input("Proceed? (y/n): ").lower() == 'y':
@@ -191,7 +188,6 @@ def main(
     query: Param('The query to send to the LLM', str, nargs='+'),
     pid: str = 'current', # `current`, `all` or tmux pane_id for context
     action: bool = False, # Run ShellSage in action mode
-    NH: bool = False, # Don't include terminal history
     n: int = 200, # Number of history lines
     s: bool = False, # Enable sassy mode
     code_theme: str = 'monokai', # The code theme to use when rendering ShellSage's responses
@@ -202,9 +198,9 @@ def main(
     md = partial(Markdown, code_theme=code_theme, inline_code_lexer=code_lexer, inline_code_theme=code_theme)
     query = ' '.join(query)
     ctxt = ''
-    # Get tmux history if requested and available
 
-    if not NH:
+    # Get tmux history if in a tmux session
+    if os.environ.get('TMUX'):
         if verbosity>0: print(f"{datetime.now()} | Adding TMUX history to prompt")
         history = get_history(n,pid)
         if history: ctxt += f'<terminal_history>\n{history}\n</terminal_history>'
