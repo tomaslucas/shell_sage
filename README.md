@@ -19,6 +19,12 @@ We recommend also setting up your terminal editor of choice to keep the editor c
 echo "set t_ti= t_te=" >> ~/.vimrc
 ```
 
+for `neovim` the above won't work.. but you can set it up in tmux:
+
+```
+set-option -g alternate-screen off
+```
+
 You will also need to get an Anthropic API key and set its environment variable:
 
 ```sh
