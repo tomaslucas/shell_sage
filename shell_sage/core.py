@@ -161,7 +161,7 @@ def main(
     query: Param('The query to send to the LLM', str, nargs='+'),
     pid: str = 'current', # `current`, `all` or tmux pane_id (e.g. %0) for context
     skip_system: bool = False, # Whether to skip system information in the AI's context
-    n: int = None, # Number of history lines. Defaults to tmux scrollback history length
+    history_lines: int = None, # Number of history lines. Defaults to tmux scrollback history length
     s: bool = False, # Enable sassy mode
     provider: str = None, # The LLM Provider
     model: str = None, # The LLM model that will be invoked on the LLM provider
@@ -169,7 +169,7 @@ def main(
     code_lexer: str = None, # The lexer to use for inline code markdown blocks
     verbosity: int = 0 # Level of verbosity (0 or 1)
 ):  
-    opts = get_opts(history_lines=n, provider=provider, model=model,
+    opts = get_opts(history_lines=history_lines, provider=provider, model=model,
                     code_theme=code_theme, code_lexer=code_lexer)
     
     if verbosity>0:

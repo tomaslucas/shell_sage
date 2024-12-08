@@ -1,0 +1,9 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "speech_buddy"
+  site-url: "https://AnswerDotAI.github.io/speech_buddy"
+  description: "Your AI transcription buddy :D"
+  repo-branch: main
+  repo-url: "https://github.com/AnswerDotAI/speech_buddy"
