@@ -10,6 +10,7 @@ from fastcore.script import *
 from fastcore.utils import *
 from functools import partial
 from msglm import mk_msg_openai as mk_msg
+from openai import OpenAI
 from rich.console import Console
 from rich.markdown import Markdown
 from .config import *
@@ -156,12 +157,14 @@ conts = {
     'anthropic': cla.contents,
     'openai': cos.contents
 }
-def get_sage(provider, model, sassy=False):
-    cli = clis[provider](model)
+def get_sage(provider, model, base_url=None, api_key=None, s=False):
+    if base_url:
+        cli = clis[provider](model, cli=OpenAI(base_url=base_url,api_key=api_key))
+    else: cli = clis[provider](model)
     contents = conts[provider]
-    return partial(cli, sp=ssp if sassy else sp), contents
+    return partial(cli, sp=ssp if s else sp), contents
 
-# %% ../nbs/00_core.ipynb 27
+# %% ../nbs/00_core.ipynb 29
 @call_parse
 def main(
     query: Param('The query to send to the LLM', str, nargs='+'),
@@ -171,12 +174,15 @@ def main(
     s: bool = False, # Enable sassy mode
     provider: str = None, # The LLM Provider
     model: str = None, # The LLM model that will be invoked on the LLM provider
+    base_url: str = None,
+    api_key: str = None,
     code_theme: str = None, # The code theme to use when rendering ShellSage's responses
     code_lexer: str = None, # The lexer to use for inline code markdown blocks
     verbosity: int = 0 # Level of verbosity (0 or 1)
 ):  
     opts = get_opts(history_lines=history_lines, provider=provider, model=model,
-                    code_theme=code_theme, code_lexer=code_lexer)
+                    base_url=base_url, api_key=api_key, code_theme=code_theme,
+                    code_lexer=code_lexer)
     if opts.history_lines is None or opts.history_lines < 0:
         opts.history_lines = tmux_history_lim()
         
@@ -202,5 +208,5 @@ def main(
     query = [mk_msg(query)] if opts.provider == 'openai' else query
 
     if verbosity>0: print(f"{datetime.now()} | Sending prompt to model")
-    sage, contents = get_sage(opts.provider, opts.model, s)
+    sage, contents = get_sage(opts.provider, opts.model, opts.base_url, opts.api_key, s)
     print(md(contents(sage(query))))
