@@ -106,6 +106,29 @@ The `--pid` flag is particularly useful when you want to analyze content
 from a different pane. The pane ID is visible in your tmux status bar
 (configured earlier).
 
+### Using Alternative Model Providers
+
+ShellSage supports using different LLM providers through base URL
+configuration. This allows you to use local models or alternative API
+endpoints:
+
+``` sh
+# Use a local Ollama endpoint
+ssage --provider openai --model llama3.2 --base_url http://localhost:11434/v1 --api_key ollama what is rsync?
+
+# Use together.ai
+ssage --provider openai --model mistralai/Mistral-7B-Instruct-v0.3 --base_url https://api.together.xyz/v1 help me with sed # make sure you've set your together API key in your shell_sage conf
+```
+
+This is particularly useful for: - Running models locally for
+privacy/offline use - Using alternative hosting providers - Testing
+different model implementations - Accessing specialized model
+deployments
+
+You can also set these configurations permanently in your ShellSage
+config file (`~/.config/shell_sage/shell_sage.conf`). See next section
+for details.
+
 ## Configuration
 
 ShellSage can be customized through its configuration file located at
@@ -117,6 +140,8 @@ example:
 # Choose your AI model provider
 provider = anthropic     # or 'openai'
 model = claude-3-sonnet # or 'gpt-4o-mini' for OpenAI
+base_url = # leave empty to use default openai endpoint
+api_key = # leave empty to default to using your OPENAI_API_KEY env var
 
 # Terminal history settings
 history_lines = -1      # -1 for all history
