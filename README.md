@@ -16,10 +16,12 @@ assistance for:
 - Process handling
 - Real-time problem solving
 
-What sets ShellSage apart is its ability to: - Read your terminal
-context through tmux integration - Provide responses based on your
-current terminal state - Accept piped input for direct analysis - Target
-specific tmux panes for focused assistance
+What sets ShellSage apart is its ability to:
+
+- Read your terminal context through tmux integration
+- Provide responses based on your current terminal state
+- Accept piped input for direct analysis
+- Target specific tmux panes for focused assistance
 
 Whether you’re a seasoned sysadmin or just getting started with the
 command line, ShellSage acts as your intelligent terminal companion,
