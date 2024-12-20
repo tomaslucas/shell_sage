@@ -122,10 +122,12 @@ ssage --provider openai --model llama3.2 --base_url http://localhost:11434/v1 --
 ssage --provider openai --model mistralai/Mistral-7B-Instruct-v0.3 --base_url https://api.together.xyz/v1 help me with sed # make sure you've set your together API key in your shell_sage conf
 ```
 
-This is particularly useful for: - Running models locally for
-privacy/offline use - Using alternative hosting providers - Testing
-different model implementations - Accessing specialized model
-deployments
+This is particularly useful for:
+
+- Running models locally for privacy/offline use
+- Using alternative hosting providers
+- Testing different model implementations
+- Accessing specialized model deployments
 
 You can also set these configurations permanently in your ShellSage
 config file (`~/.config/shell_sage/shell_sage.conf`). See next section
@@ -201,8 +203,12 @@ ShellSage is built using [nbdev](https://nbdev.fast.ai/). For detailed
 contribution guidelines, please see our
 [CONTRIBUTING.md](CONTRIBUTING.md) file.
 
-We welcome contributions of all kinds: - Bug reports - Feature
-requests - Documentation improvements - Code contributions
+We welcome contributions of all kinds:
+
+- Bug reports
+- Feature requests
+- Documentation improvements
+- Code contributions
 
 Please visit our [GitHub
 repository](https://github.com/AnswerDotAI/shell_sage) to get started.
