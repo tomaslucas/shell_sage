@@ -19,6 +19,8 @@ from subprocess import check_output as co
 import os,subprocess,sys
 import claudette as cla, cosette as cos
 
+from typing import Optional
+
 # %% ../nbs/00_core.ipynb 4
 print = Console().print
 
@@ -170,16 +172,16 @@ def main(
     query: Param('The query to send to the LLM', str, nargs='+'),
     pid: str = 'current', # `current`, `all` or tmux pane_id (e.g. %0) for context
     skip_system: bool = False, # Whether to skip system information in the AI's context
-    history_lines: int = None, # Number of history lines. Defaults to tmux scrollback history length
+    history_lines: Optional[int] = None, # Number of history lines. Defaults to tmux scrollback history length
     s: bool = False, # Enable sassy mode
-    provider: str = None, # The LLM Provider
-    model: str = None, # The LLM model that will be invoked on the LLM provider
-    base_url: str = None,
-    api_key: str = None,
-    code_theme: str = None, # The code theme to use when rendering ShellSage's responses
-    code_lexer: str = None, # The lexer to use for inline code markdown blocks
+    provider: Optional[str] = None, # The LLM Provider
+    model: Optional[str] = None, # The LLM model that will be invoked on the LLM provider
+    base_url: Optional[str] = None,
+    api_key: Optional[str] = None,
+    code_theme: Optional[str] = None, # The code theme to use when rendering ShellSage's responses
+    code_lexer: Optional[str] = None, # The lexer to use for inline code markdown blocks
     verbosity: int = 0 # Level of verbosity (0 or 1)
-):  
+):    
     opts = get_opts(history_lines=history_lines, provider=provider, model=model,
                     base_url=base_url, api_key=api_key, code_theme=code_theme,
                     code_lexer=code_lexer)
